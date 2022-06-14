@@ -29,6 +29,8 @@ This will return a simple 200 OK and traces will be sent do Dynatrace, enriched 
 
 ### Running the example
 
+This is the procedure to execute locally outside of a Kubernetes.
+
 1. Install gems
   * `bundle install`
 1. Run the service_up.sh script to bring everything up (Node + Ruby)
