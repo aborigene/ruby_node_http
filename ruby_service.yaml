@@ -1,0 +1,63 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ruby-service-config
+data:
+  DT_API_TOKEN: <token>
+#  PORT: '4000'
+#  DB_CONNECTION_URL: mongodb://ruby-service:swordfish@mongo:27017/ruby-service
+#  MAIL_SERVICE_BASE_URL: http://mail-service:4100
+#  VERIFICATION_SERVICE_URL: verification-service:4010
+#  OTEL_ENDPOINT_URL: grpc://otel-collector.otel:4317
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ruby-service
+  labels:
+    app: ruby-service
+spec:
+  selector:
+    app: ruby-service
+  ports:
+    - name: http
+      port: 4567
+      targetPort: http
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: ruby-service
+    app.kubernetes.io/name: ruby-service
+    app.kubernetes.io/version: latest
+    app.kubernetes.io/component: service
+    app.kubernetes.io/part-of: opentelemetry-demo
+    app.kubernetes.io/managed-by: manifests
+    app.kubernetes.io/created-by: admin
+  name: ruby-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ruby-service
+  template:
+    metadata:
+      labels:
+        app: ruby-service
+    spec:
+      containers:
+        - name: ruby-service
+          image: <image repo and tags>
+          imagePullPolicy: Always
+          resources: {}
+          envFrom:
+            - configMapRef:
+                name: ruby-service-config
+          ports:
+            - name: http
+              containerPort: 4567
+              protocol: TCP
