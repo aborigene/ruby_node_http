@@ -10,6 +10,23 @@ This is a simple example that demonstrates tracing an HTTP request from NodeJS t
 * Using the console exporter
 * How to export to Dynatrace
 
+### Running on Kubernetes
+
+To test otel and trace enrichment on Kubertes + Dynatrace, just:
+
+1. Change the code to point to your environment
+2. Build the image: `docker build . -t <image tag>`
+3. Push the image to repo: `docker push <image tag>`
+4. Change the ruby_service.yaml to add your token and image
+5. Deploy the example: `kubectl apply -f ruby_service.yaml`
+
+This will expose the service on a public port 4567 and you be able to test with curl:
+
+`curl <public ip from the created service>:4567/hello`
+
+This will return a simple 200 OK and traces will be sent do Dynatrace, enriched with metada collected by the OneAgent. These traces then will not incur in DDU consumptiom because the host is already being monitored by OneAgent in FullStack mode.
+
+
 ### Running the example
 
 1. Install gems
